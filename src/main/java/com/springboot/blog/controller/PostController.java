@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping( "/blog/api/v1/posts")
+@RequestMapping("/blog/api/v1/posts")
 public class PostController {
     private final PostService postService;
 
@@ -22,13 +22,19 @@ public class PostController {
 
     // create post endpoint
     @PostMapping
-    public ResponseEntity<PostDto> createPost(@RequestBody PostDto postRequestDto){
+    public ResponseEntity<PostDto> createPost(@RequestBody PostDto postRequestDto) {
         return new ResponseEntity<>(postService.createPost(postRequestDto), HttpStatus.CREATED);
     }
 
     // get all posts
     @GetMapping
-    public ResponseEntity<List<PostDto>> getAllPosts(){
+    public ResponseEntity<List<PostDto>> getAllPosts() {
         return new ResponseEntity<>(postService.getAllPosts(), HttpStatus.OK);
+    }
+
+    // get post by id
+    @GetMapping("/{id}")
+    public ResponseEntity<PostDto> getPostById(@PathVariable(name = "id") Long id) {
+        return new ResponseEntity<>(postService.getPostById(id), HttpStatus.OK);
     }
 }
