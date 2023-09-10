@@ -56,8 +56,8 @@ public class PostServiceImpl implements PostService {
         Page<Post> posts = postRepository.findAll(pageable);
         // get content for page object
         List<Post> allPosts = posts.getContent();
-        List<PostDto> content =  allPosts.stream().map(this::mapEntityToDto).toList();
-        return prepareResponseForGetAll(content,posts);
+        List<PostDto> content = allPosts.stream().map(this::mapEntityToDto).toList();
+        return prepareResponseForGetAll(content, posts);
     }
 
 
@@ -84,7 +84,8 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public void deletePost(long id) {
-        Post post = postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Post", "Id", id));
+        Post post = postRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("Post", "Id", id));
         postRepository.delete(post);
     }
 

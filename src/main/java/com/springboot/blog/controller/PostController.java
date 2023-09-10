@@ -42,7 +42,7 @@ public class PostController {
             @RequestParam(value = "pageNo", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER, required = false) int pageNo,
             @RequestParam(value = "pageSize", defaultValue = AppConstants.DEFAULT_PAGE_SIZE, required = false) int pageSize,
             @RequestParam(value = "sortBy", defaultValue = AppConstants.DEFAULT_SORT_BY, required = false) String sortBy,
-            @RequestParam(value = "sortDir", defaultValue = AppConstants.DEFAULT_SORT_DIRECTION, required = false) String sortDir
+            @RequestParam(value = "sortDir", defaultValue = AppConstants.DEFAULT_SORT_DIRECTION, required = false) String  sortDir
     ) {
         PostResponse postResponseDtoList = postService.getAllPosts(pageNo, pageSize, sortBy, sortDir);
         return new ResponseEntity<>(postResponseDtoList, HttpStatus.OK);
@@ -50,21 +50,21 @@ public class PostController {
 
     // get post by id
     @GetMapping("/{id}")
-    public ResponseEntity<PostDto> getPostById(@PathVariable(name = "id") Long id) {
+    public ResponseEntity<PostDto> getPostById(@PathVariable(value = "id") Long id) {
         PostDto postResponseDto = postService.getPostById(id);
         return new ResponseEntity<>(postResponseDto, HttpStatus.OK);
     }
 
     // update a post by id
     @PutMapping("/{id}")
-    public ResponseEntity<PostDto> updatePost(@RequestBody PostDto postRequestDto, @PathVariable(name = "id") Long id) {
+    public ResponseEntity<PostDto> updatePost(@RequestBody PostDto postRequestDto, @PathVariable(value = "id") Long id) {
         PostDto postResponseDto = postService.updatePost(postRequestDto, id);
         return new ResponseEntity<>(postResponseDto, HttpStatus.OK);
     }
 
     //delete a post by id
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deletePost(@PathVariable(name = "id") Long id) {
+    public ResponseEntity<String> deletePost(@PathVariable(value = "id") Long id) {
         postService.deletePost(id);
         return new ResponseEntity<>(String.format("Post deleted successfully, ID : %s ", id), HttpStatus.OK);
     }
