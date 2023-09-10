@@ -26,10 +26,21 @@ public class PostController {
         return new ResponseEntity<>(postResponseDto, HttpStatus.CREATED);
     }
 
+    // create multiple posts
+    @PostMapping("/create_posts")
+    public ResponseEntity<List<PostDto>> createPosts(@RequestBody List<PostDto> postRequestDtoList) {
+        List<PostDto> postResponseDtoList = postService.createPosts(postRequestDtoList);
+        return new ResponseEntity<>(postResponseDtoList, HttpStatus.CREATED);
+    }
+
+
     // get all posts
     @GetMapping
-    public ResponseEntity<List<PostDto>> getAllPosts() {
-        List<PostDto> postResponseDtoList = postService.getAllPosts();
+    public ResponseEntity<List<PostDto>> getAllPosts(
+            @RequestParam(value = "pageNo", defaultValue = "0", required = false) int pageNo,
+            @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize
+    ) {
+        List<PostDto> postResponseDtoList = postService.getAllPosts(pageNo, pageSize);
         return new ResponseEntity<>(postResponseDtoList, HttpStatus.OK);
     }
 
