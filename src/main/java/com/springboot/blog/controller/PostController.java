@@ -21,51 +21,50 @@ public class PostController {
         this.postService = postService;
     }
 
-    // create post endpoint
+    // Create a post
     @PostMapping
     public ResponseEntity<PostDto> createPost(@RequestBody PostDto postRequestDto) {
         PostDto postResponseDto = postService.createPost(postRequestDto);
         return new ResponseEntity<>(postResponseDto, HttpStatus.CREATED);
     }
 
-    // create multiple posts
+    // Create multiple posts
     @PostMapping("/create_posts")
     public ResponseEntity<List<PostDto>> createPosts(@RequestBody List<PostDto> postRequestDtoList) {
         List<PostDto> postResponseDtoList = postService.createPosts(postRequestDtoList);
         return new ResponseEntity<>(postResponseDtoList, HttpStatus.CREATED);
     }
 
-
-    // get all posts
+    // Get all posts with pagination and sorting
     @GetMapping
     public ResponseEntity<PostResponse> getAllPosts(
             @RequestParam(value = "pageNo", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER, required = false) int pageNo,
             @RequestParam(value = "pageSize", defaultValue = AppConstants.DEFAULT_PAGE_SIZE, required = false) int pageSize,
             @RequestParam(value = "sortBy", defaultValue = AppConstants.DEFAULT_SORT_BY, required = false) String sortBy,
-            @RequestParam(value = "sortDir", defaultValue = AppConstants.DEFAULT_SORT_DIRECTION, required = false) String  sortDir
+            @RequestParam(value = "sortDir", defaultValue = AppConstants.DEFAULT_SORT_DIRECTION, required = false) String sortDir
     ) {
         PostResponse postResponseDtoList = postService.getAllPosts(pageNo, pageSize, sortBy, sortDir);
         return new ResponseEntity<>(postResponseDtoList, HttpStatus.OK);
     }
 
-    // get post by id
+    // Get a post by its ID
     @GetMapping("/{id}")
     public ResponseEntity<PostDto> getPostById(@PathVariable(value = "id") Long id) {
         PostDto postResponseDto = postService.getPostById(id);
         return new ResponseEntity<>(postResponseDto, HttpStatus.OK);
     }
 
-    // update a post by id
+    // Update a post by its ID
     @PutMapping("/{id}")
     public ResponseEntity<PostDto> updatePost(@RequestBody PostDto postRequestDto, @PathVariable(value = "id") Long id) {
         PostDto postResponseDto = postService.updatePost(postRequestDto, id);
         return new ResponseEntity<>(postResponseDto, HttpStatus.OK);
     }
 
-    //delete a post by id
+    // Delete a post by its ID
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deletePost(@PathVariable(value = "id") Long id) {
         postService.deletePost(id);
-        return new ResponseEntity<>(String.format("Post deleted successfully, ID : %s ", id), HttpStatus.OK);
+        return new ResponseEntity<>(String.format("Post deleted successfully, ID: %s ", id), HttpStatus.OK);
     }
 }
