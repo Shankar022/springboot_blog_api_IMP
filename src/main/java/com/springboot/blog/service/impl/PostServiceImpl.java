@@ -21,76 +21,84 @@ public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
 
     @Autowired
-    // if a class has only one member then it is required to @Autowired annotation
+    // If a class has only one member, then it is not required to use the @Autowired annotation
     public PostServiceImpl(PostRepository postRepository) {
         this.postRepository = postRepository;
     }
 
+    // Create a new post
     @Override
     public PostDto createPost(PostDto postRequestDto) {
-
-        // convert DTO o Entity
+        // Convert DTO to Entity
         Post post = mapDtoToEntity(postRequestDto);
-        // save the post in DB
+        // Save the post in the database
         Post newPost = postRepository.save(post);
-        // convert Entity to DTO
+        // Convert Entity to DTO
         return mapEntityToDto(newPost);
     }
 
+    // Create multiple posts
     @Override
     public List<PostDto> createPosts(List<PostDto> postRequestDtoList) {
-        // convert DTO o Entity
+        // Convert DTOs to Entities
         List<Post> posts = postRequestDtoList.stream().map(this::mapDtoToEntity).toList();
         List<Post> newPosts = postRepository.saveAll(posts);
+        // Convert Entities to DTOs
         return newPosts.stream().map(this::mapEntityToDto).toList();
     }
 
-
+    // Get all posts with pagination and sorting
     @Override
     public PostResponse getAllPosts(int pageNo, int pageSize, String sortBy, String sortDir) {
-
         // Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending()
         //        : Sort.by(sortBy).descending();
-        // create pageable instance
+
+        // Create a pageable instance with pagination and sorting parameters
         Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.Direction.fromString(sortDir), sortBy);
         Page<Post> posts = postRepository.findAll(pageable);
-        // get content for page object
+        // Get content for the page object and prepare the response
         List<Post> allPosts = posts.getContent();
         List<PostDto> content = allPosts.stream().map(this::mapEntityToDto).toList();
         return prepareResponseForGetAll(content, posts);
     }
 
-
+    // Get a specific post by its ID
     @Override
     public PostDto getPostById(long id) {
+        // Find the post by its ID or throw a ResourceNotFoundException
         Post post = postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Post", "Id", id));
+        // Convert Entity to DTO
         return mapEntityToDto(post);
     }
 
+    // Update a specific post by its ID
     @Override
     public PostDto updatePost(PostDto postRequestDto, long id) {
+        // Find the post by its ID or throw a ResourceNotFoundException
         Post post = postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Post", "Id", id));
-
-        // convert DTO to Entity
+        // Convert DTO to Entity
         Post newPost = mapDtoToEntity(postRequestDto);
-        // update the post
+        // Update the post
         post.setTitle(newPost.getTitle());
         post.setDescription(newPost.getDescription());
         post.setContent(newPost.getContent());
-
+        // Save the updated post
         Post updatedPost = postRepository.save(post);
+        // Convert Entity to DTO for the response
         return mapEntityToDto(updatedPost);
     }
 
+    // Delete a specific post by its ID
     @Override
     public void deletePost(long id) {
+        // Find the post by its ID or throw a ResourceNotFoundException
         Post post = postRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException("Post", "Id", id));
+        // Delete the post
         postRepository.delete(post);
     }
 
-
-    // convert DTO to Entity function
+    // Convert DTO to Entity function
     private Post mapDtoToEntity(PostDto postRequestDto) {
         Post post = new Post();
         post.setTitle(postRequestDto.getTitle());
@@ -99,7 +107,7 @@ public class PostServiceImpl implements PostService {
         return post;
     }
 
-    // convert Entity to DTO function
+    // Convert Entity to DTO function
     private PostDto mapEntityToDto(Post newPost) {
         return new PostDto(
                 newPost.getId(),
@@ -109,7 +117,7 @@ public class PostServiceImpl implements PostService {
         );
     }
 
-    // create a PostResponse object and return it back
+    // Create a PostResponse object and return it
     private PostResponse prepareResponseForGetAll(List<PostDto> content, Page<Post> posts) {
         return new PostResponse(
                 posts.getNumber(),
