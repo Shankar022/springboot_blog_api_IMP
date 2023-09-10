@@ -19,7 +19,7 @@ public class CommentController {
         this.commentService = commentService;
     }
 
-    // create a comment to a post
+    // Create a comment for a post
     @PostMapping("/{postId}/comments")
     public ResponseEntity<CommentDto> createComment(
             @PathVariable(value = "postId") long postId,
@@ -28,14 +28,14 @@ public class CommentController {
         return new ResponseEntity<>(commentResponseDto, HttpStatus.CREATED);
     }
 
-    // get all comments by a post id
+    // Get all comments for a post by post ID
     @GetMapping("/{postId}/comments")
     public ResponseEntity<List<CommentDto>> getCommentsByPostId(@PathVariable(value = "postId") long postId) {
         List<CommentDto> commentDtoList = commentService.getCommentsByPostId(postId);
         return new ResponseEntity<>(commentDtoList, HttpStatus.OK);
     }
 
-    // get comment by id
+    // Get a comment by its ID
     @GetMapping("/{postId}/comments/{commentId}")
     public ResponseEntity<CommentDto> getCommentById(
             @PathVariable(value = "postId") long postId,
@@ -45,7 +45,7 @@ public class CommentController {
         return new ResponseEntity<>(commentResponseDto, HttpStatus.OK);
     }
 
-    // update a comment by id
+    // Update a comment by its ID
     @PutMapping("/{postId}/comments/{commentId}")
     public ResponseEntity<CommentDto> updateComment(
             @PathVariable(value = "postId") long postId,
@@ -56,15 +56,13 @@ public class CommentController {
         return new ResponseEntity<>(commentResponseDto, HttpStatus.OK);
     }
 
-    // delete a comment
+    // Delete a comment by its ID
     @DeleteMapping("/{postId}/comments/{commentId}")
     public ResponseEntity<String> updateComment(
             @PathVariable(value = "postId") long postId,
             @PathVariable(value = "commentId") long commentId
     ) {
         commentService.deleteComment(postId, commentId);
-        return new ResponseEntity<>(String.format("Comment deleted successfully, ID : %s ", commentId), HttpStatus.OK);
+        return new ResponseEntity<>(String.format("Comment deleted successfully, ID: %s ", commentId), HttpStatus.OK);
     }
-
-
 }
