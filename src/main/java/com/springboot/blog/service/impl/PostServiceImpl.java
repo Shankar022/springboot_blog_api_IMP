@@ -6,6 +6,7 @@ import com.springboot.blog.payload.PostDto;
 import com.springboot.blog.payload.PostResponse;
 import com.springboot.blog.repository.PostRepository;
 import com.springboot.blog.service.PostService;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -19,11 +20,13 @@ import java.util.List;
 public class PostServiceImpl implements PostService {
 
     private final PostRepository postRepository;
+    private final ModelMapper modelMapper;
 
     @Autowired
     // If a class has only one member, then it is not required to use the @Autowired annotation
-    public PostServiceImpl(PostRepository postRepository) {
+    public PostServiceImpl(PostRepository postRepository, ModelMapper modelMapper) {
         this.postRepository = postRepository;
+        this.modelMapper = modelMapper;
     }
 
     // Create a new post
@@ -100,21 +103,23 @@ public class PostServiceImpl implements PostService {
 
     // Convert DTO to Entity function
     private Post mapDtoToEntity(PostDto postRequestDto) {
-        Post post = new Post();
-        post.setTitle(postRequestDto.getTitle());
-        post.setDescription(postRequestDto.getDescription());
-        post.setContent(postRequestDto.getContent());
-        return post;
+        return modelMapper.map(postRequestDto,Post.class);
+//        Post post = new Post();
+//        post.setTitle(postRequestDto.getTitle());
+//        post.setDescription(postRequestDto.getDescription());
+//        post.setContent(postRequestDto.getContent());
+//        return post;
     }
 
     // Convert Entity to DTO function
     private PostDto mapEntityToDto(Post newPost) {
-        return new PostDto(
-                newPost.getId(),
-                newPost.getTitle(),
-                newPost.getDescription(),
-                newPost.getContent()
-        );
+        return modelMapper.map(newPost, PostDto.class);
+//        return new PostDto(
+//                newPost.getId(),
+//                newPost.getTitle(),
+//                newPost.getDescription(),
+//                newPost.getContent()
+//        );
     }
 
     // Create a PostResponse object and return it
