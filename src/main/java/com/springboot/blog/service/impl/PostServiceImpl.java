@@ -3,16 +3,17 @@ package com.springboot.blog.service.impl;
 import com.springboot.blog.entity.Post;
 import com.springboot.blog.exception.ResourceNotFoundException;
 import com.springboot.blog.payload.PostDto;
+import com.springboot.blog.payload.PostResponse;
 import com.springboot.blog.repository.PostRepository;
 import com.springboot.blog.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class PostServiceImpl implements PostService {
@@ -46,14 +47,19 @@ public class PostServiceImpl implements PostService {
 
 
     @Override
-    public List<PostDto> getAllPosts(int pageNo, int pageSize) {
+    public PostResponse getAllPosts(int pageNo, int pageSize, String sortBy, String sortDir) {
+
+        // Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending()
+        //        : Sort.by(sortBy).descending();
         // create pageable instance
-        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.Direction.fromString(sortDir), sortBy);
         Page<Post> posts = postRepository.findAll(pageable);
         // get content for page object
         List<Post> allPosts = posts.getContent();
-        return allPosts.stream().map(this::mapEntityToDto).toList();
+        List<PostDto> content =  allPosts.stream().map(this::mapEntityToDto).toList();
+        return prepareResponseForGetAll(content,posts);
     }
+
 
     @Override
     public PostDto getPostById(long id) {
@@ -99,6 +105,19 @@ public class PostServiceImpl implements PostService {
                 newPost.getTitle(),
                 newPost.getDescription(),
                 newPost.getContent()
+        );
+    }
+
+    // create a PostResponse object and return it back
+    private PostResponse prepareResponseForGetAll(List<PostDto> content, Page<Post> posts) {
+        return new PostResponse(
+                posts.getNumber(),
+                posts.getSize(),
+                posts.getTotalElements(),
+                posts.getTotalPages(),
+                posts.isFirst(),
+                posts.isLast(),
+                content
         );
     }
 }
